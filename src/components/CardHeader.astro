@@ -1,0 +1,17 @@
+---
+import Image from 'astro/components/Image.astro';
+interface Props{
+  imgSrc:string;
+  original:string;
+}
+
+const {imgSrc,original}= Astro.props;
+
+---
+
+<div class="overflow-hidden">
+<div class="relative select-none bg-[#B4BEE0] rounded-sm aspect-[16/9] mb-2 card-header-animation ">
+  <img src={imgSrc} class=`rounded-sm  aspect-video scale-100 hover:scale-105 duration-500`  alt="Project"/>
+ 
+</div>
+</div>

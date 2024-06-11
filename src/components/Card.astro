@@ -1,0 +1,35 @@
+---
+// Component Script Section
+import CardHeader from './CardHeader.astro';
+import CardTitle from './CardTitle.astro';
+import CardDesc from './CardDesc.astro';
+import CardFooter from './CardFooter.astro';
+import type { ShouldRevalidateFunctionArgs } from 'react-router-dom';
+interface Props {
+	title: string;
+	body: string;
+	href: string;
+	tech:string;
+    imgSrc:string;
+	original:string;
+}
+
+const { imgSrc , href, title, tech ,body,original} = Astro.props;
+---
+
+
+
+<!-- Component Style Section -->
+<!-- <div class="overflow-hidden"> -->
+<div class="relative basis-1/2 md:px-8 py-4">
+	<!-- <a href=`${href}`> -->
+		
+		<CardHeader imgSrc=`${imgSrc}` original=`${original}`/>
+		
+		<CardTitle title=`${title}` href=`${href}` />
+		
+		<CardDesc body=`${body}`/>
+
+		<CardFooter tech=`${tech}`/>
+
+</div>
