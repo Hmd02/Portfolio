@@ -6,26 +6,231 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="h-full scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/yoga.png" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&display=swap"
+			rel="stylesheet"
+		/>
 
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<!-- Dialogflow Messenger Chatbot -->
+		<link
+			rel="stylesheet"
+			href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css"
+		/>
+		<script
+			is:inline
+			src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"
+		></script>
 	</head>
 	<body class="dark">
-	 <div class="selection:bg-aqua selection:text-black dark:text-blue-50  bg-cover dark:bg-auto bg-[url('/light.avif')] dark:bg-[url('/stars.gif')] ">
-	   <slot />
-	</div>
+		<div
+			class="selection:bg-aqua selection:text-black dark:text-blue-50 bg-cover dark:bg-auto bg-[url('/light.avif')] dark:bg-[url('/stars.gif')]"
+		>
+			<slot />
+		</div>
+
+		<!-- Dialogflow Messenger Widget -->
+		<df-messenger
+			location="asia-south1"
+			project-id="project-48f28c56-9e51-494b-a3e"
+			agent-id="acb02a5a-4dc3-4217-aed4-c94110e5ca80"
+			language-code="en"
+			max-query-length="-1"
+			chat-icon="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/robot_2/default/24px.svg"
+		>
+			<df-messenger-chat-bubble
+				chat-title="Assistant"
+				chat-title-icon="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/robot_2/default/24px.svg"
+			/>
+		</df-messenger>
+
+		<!-- Pulse ring (separate element to avoid pseudo-element black-corner bug) -->
+		<div id="chat-pulse" aria-hidden="true"></div>
+
+		<!-- Tooltip hint -->
+		<div id="chat-tooltip" aria-hidden="true">💬 Ask me anything!</div>
+
+		<style>
+			/* ── Chatbot core styling ── */
+			df-messenger {
+				z-index: 999;
+				position: fixed;
+				bottom: 24px;
+				right: 24px;
+				/* Typography */
+				--df-messenger-font-family: "Inter", "Segoe UI", system-ui,
+					sans-serif;
+				--df-messenger-font-color: #1a1a2e;
+				--df-messenger-message-user-font-color: #ffffff;
+				--df-messenger-input-placeholder-font-color: #888;
+
+				/* Titlebar */
+				--df-messenger-button-titlebar-color: #7c3aed;
+				--df-messenger-button-titlebar-font-color: #ffffff;
+				--df-messenger-titlebar-icon-padding: 10px;
+
+				/* Chat panel */
+				--df-messenger-chat-background: #f9f7ff;
+				--df-messenger-chat-window-height: 520px;
+
+				/* Message bubbles */
+				--df-messenger-message-user-background: linear-gradient(
+					135deg,
+					#7c3aed,
+					#9c27b0
+				);
+				--df-messenger-message-bot-background: #ede9fe;
+				--df-messenger-message-bot-font-color: #1a1a2e;
+				--df-messenger-message-border-radius: 18px;
+
+				/* Input bar */
+				--df-messenger-input-box-color: #ffffff;
+				--df-messenger-input-font-color: #1a1a2e;
+				--df-messenger-send-icon-color: #7c3aed;
+				--df-messenger-input-border-radius: 24px;
+				--df-messenger-input-border-color: #c4b5fd;
+
+				/* Send button */
+				--df-messenger-input-send-button-color: #7c3aed;
+				--df-messenger-input-send-button-color-hover: #5b21b6;
+
+				/* Suggestion chips */
+				--df-messenger-chip-border-color: #7c3aed;
+				--df-messenger-chip-font-color: #7c3aed;
+				--df-messenger-chip-color: transparent;
+				--df-messenger-chip-color-hover: #ede9fe;
+
+				/* Chat bubble button */
+				--df-messenger-chat-bubble-background: linear-gradient(
+					135deg,
+					#7c3aed,
+					#9c27b0
+				);
+				--df-messenger-chat-bubble-icon-color: #ffffff;
+				--df-messenger-chat-bubble-size: 60px;
+			}
+
+			/* ── Pulsing ring (real div, avoids ::before black-corner bug) ── */
+			#chat-pulse {
+				position: fixed;
+				bottom: 24px;
+				right: 24px;
+				width: 60px;
+				height: 60px;
+				border-radius: 50%;
+				background: rgba(124, 58, 237, 0.35);
+				animation: chat-pulse 2.4s ease-out infinite;
+				pointer-events: none;
+				z-index: 997;
+			}
+
+			@keyframes chat-pulse {
+				0% {
+					transform: scale(1);
+					opacity: 0.8;
+				}
+				70% {
+					transform: scale(1.7);
+					opacity: 0;
+				}
+				100% {
+					transform: scale(1.7);
+					opacity: 0;
+				}
+			}
+
+			/* ── Tooltip ── */
+			#chat-tooltip {
+				position: fixed;
+				bottom: 100px;
+				right: 28px;
+				background: #7c3aed;
+				color: #fff;
+				font-family: "Inter", system-ui, sans-serif;
+				font-size: 13px;
+				font-weight: 500;
+				padding: 7px 14px;
+				border-radius: 999px;
+				white-space: nowrap;
+				box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+				opacity: 0;
+				transform: translateY(6px);
+				transition: opacity 0.3s ease, transform 0.3s ease;
+				pointer-events: none;
+				z-index: 998;
+			}
+
+			#chat-tooltip.visible {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			/* Small arrow pointing down */
+			#chat-tooltip::after {
+				content: "";
+				position: absolute;
+				bottom: -6px;
+				right: 22px;
+				border-width: 6px 6px 0;
+				border-style: solid;
+				border-color: #7c3aed transparent transparent;
+			}
+		</style>
+
+		<script is:inline>
+			/* Show tooltip for 3 s on first visit, then on hover */
+			(function () {
+				var tooltip = document.getElementById("chat-tooltip");
+				if (!tooltip) return;
+
+				function show() {
+					tooltip.classList.add("visible");
+				}
+				function hide() {
+					tooltip.classList.remove("visible");
+				}
+
+				/* First-visit hint */
+				var seen = sessionStorage.getItem("chatTooltipSeen");
+				if (!seen) {
+					setTimeout(show, 1200);
+					setTimeout(function () {
+						hide();
+						sessionStorage.setItem("chatTooltipSeen", "1");
+					}, 4500);
+				}
+
+				/* Hover hint (works after the shadow DOM is ready) */
+				document.addEventListener("mouseover", function (e) {
+					if (
+						e.target &&
+						e.target.closest &&
+						e.target.closest("df-messenger")
+					)
+						show();
+				});
+				document.addEventListener("mouseout", function (e) {
+					if (
+						e.target &&
+						e.target.closest &&
+						e.target.closest("df-messenger")
+					)
+						hide();
+				});
+			})();
+		</script>
 	</body>
-	
 </html>
 <style is:global>
 	:root {
@@ -41,22 +246,12 @@ const { title } = Astro.props;
 	}
 	html {
 		font-family: "Akaya Kanadaka", system-ui;
-  		font-weight: 400;
-  		font-style: normal;
+		font-weight: 400;
+		font-style: normal;
 		/* background: #222831; */
-		
-
 	}
 	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
+		font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+			DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	}
-
 </style>
